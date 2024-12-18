@@ -31,6 +31,11 @@ a:hover {
   pointer-events: none;
 }
 
+.header {
+  display: flex;
+  flex-direction: row;
+}
+
 .header h1 {
   margin: 0;
   color: var(--lightgrey);
@@ -39,12 +44,16 @@ a:hover {
 
 .flexContainer {
   display:flex;
-
+  background-color: var(--darkblue);
+  margin-left: 1vh;
+  margin-right: 1vh;
+  border-radius: 2%;
 }
 
 .aside {
   flex-grow: 4;
   color: var(--lightgrey);
+
 }
 
 .body {

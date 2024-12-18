@@ -6,11 +6,13 @@ function App() {
     <div className="App">
       <head>
         <title>IT Chess</title>
+
       </head>
 
       <header className="header">
         <h1>InFoMaChess</h1>
-
+        <button>Login</button>
+        <button>Sign Up</button>
       </header>
 
       <div className='flexContainer'>
