@@ -10,9 +10,18 @@ function App() {
       </head>
 
       <header className="header">
-        <h1>InFoMaChess</h1>
-        <button>Login</button>
-        <button>Sign Up</button>
+        
+        <div className="navLeft"></div>
+
+        <div className="navMiddle">
+          <h1>InFoMaChess</h1>
+        </div>
+
+        <div className="navRight">
+          <button>Login</button>
+          <button>Sign Up</button>
+        </div>
+        
       </header>
 
       <div className='flexContainer'>
@@ -21,7 +30,7 @@ function App() {
         </aside>
 
         <section className="body">
-          <img src={placeholder}></img>
+          <img src={placeholder} alt={"unity game goes here"}></img>
         </section>
       </div>
 
