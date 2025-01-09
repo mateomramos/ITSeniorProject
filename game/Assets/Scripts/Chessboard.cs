@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
 
-public class ChessboardSC : MonoBehavior
+public class Chessboard : MonoBehaviour
 {
     // LOGIC 
     private const int TILE_COUNT_X = 8;
     private const int TILE_COUNT_Y = 8;
     private GameObject[,] tiles;
-    
+    private Transform transform;
+
     private void awake() {
         GenerateAllTiles(1, TILE_COUNT_X, TILE_COUNT_Y);
     }
