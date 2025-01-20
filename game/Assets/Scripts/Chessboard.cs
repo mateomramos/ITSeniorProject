@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Chessboard : MonoBehaviour
@@ -6,11 +7,16 @@ public class Chessboard : MonoBehaviour
 
     [Header("Art stuff")]
     [SerializeField] private Material tileMaterial;
-    [SerializeField] private float tileSize = 1f;
+    [SerializeField] private float tileSize = 1.0f;
     [SerializeField] private float yOffset = 0.0f;
-    [SerializeField] private Vector3 boardCenter = Vector3.zero;
+    [SerializeField] private Vector3 boardCenter = new Vector3(0, 0.19f, 0);
+
+    [Header("Prefabs & Material")]
+    [SerializeField] private GameObject[] prefabs;
+    [SerializeField] private Material[] teamMaterials;
 
     // LOGIC 
+    private ChessPiece[,] chessPieces;
     private const int TILE_COUNT_X = 8;
     private const int TILE_COUNT_Y = 8;
     private GameObject[,] tiles;
@@ -21,6 +27,8 @@ public class Chessboard : MonoBehaviour
     private void Awake() 
     {
         GenerateAllTiles(tileSize, TILE_COUNT_X, TILE_COUNT_Y);
+
+        SpawnAllPieces();
     }
     private void Update()
     {
@@ -51,9 +59,7 @@ public class Chessboard : MonoBehaviour
                 currentHover = hitPosition;
                 tiles[hitPosition.x, hitPosition.y].layer = LayerMask.NameToLayer("Hover");
             }
-        }
-        else { 
-        
+        } else { 
             if (currentHover != -Vector2Int.one) {
 
                 tiles[currentHover.x, currentHover.y].layer = LayerMask.NameToLayer("Tile");
@@ -101,6 +107,66 @@ public class Chessboard : MonoBehaviour
 
         return tileObject;
     }
+
+    //Spawning of the pieces
+    private void SpawnAllPieces()
+    {
+        chessPieces = new ChessPiece[TILE_COUNT_X, TILE_COUNT_Y];
+
+        int whiteTeam = 0, blackTeam = 1;
+
+        //White team
+        chessPieces[0, 0] = SpawnSinglePiece(ChessPieceType.Rook, whiteTeam);
+        chessPieces[1, 0] = SpawnSinglePiece(ChessPieceType.Knight, whiteTeam);
+        chessPieces[2, 0] = SpawnSinglePiece(ChessPieceType.Bishop, whiteTeam);
+        chessPieces[3, 0] = SpawnSinglePiece(ChessPieceType.Queen, whiteTeam);
+        chessPieces[4, 0] = SpawnSinglePiece(ChessPieceType.King, whiteTeam);
+        chessPieces[5, 0] = SpawnSinglePiece(ChessPieceType.Bishop, whiteTeam);
+        chessPieces[6, 0] = SpawnSinglePiece(ChessPieceType.Knight, whiteTeam);
+        chessPieces[7, 0] = SpawnSinglePiece(ChessPieceType.Rook, whiteTeam);
+        for (int i = 0; i < TILE_COUNT_X; i++) {
+            chessPieces[i, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
+        }
+
+        //Black team
+        chessPieces[0, 7] = SpawnSinglePiece(ChessPieceType.Rook, blackTeam);
+        chessPieces[1, 7] = SpawnSinglePiece(ChessPieceType.Knight, blackTeam);
+        chessPieces[2, 7] = SpawnSinglePiece(ChessPieceType.Bishop, blackTeam);
+        chessPieces[3, 7] = SpawnSinglePiece(ChessPieceType.Queen, blackTeam);
+        chessPieces[4, 7] = SpawnSinglePiece(ChessPieceType.King, blackTeam);
+        chessPieces[5, 7] = SpawnSinglePiece(ChessPieceType.Bishop, blackTeam);
+        chessPieces[6, 7] = SpawnSinglePiece(ChessPieceType.Knight, blackTeam);
+        chessPieces[7, 7] = SpawnSinglePiece(ChessPieceType.Rook, blackTeam);
+        for (int i = 0; i < TILE_COUNT_X; i++)
+        {
+            chessPieces[i, 6] = SpawnSinglePiece(ChessPieceType.Pawn, blackTeam);
+        }
+    }
+    private ChessPiece SpawnSinglePiece(ChessPieceType type, int team)
+    {
+        ChessPiece cp = Instantiate(prefabs[(int) type - 1], transform).GetComponent<ChessPiece>();
+
+        cp.type = type;
+        cp.team = team;
+        cp.GetComponent<MeshRenderer>().material = teamMaterials[team];
+
+        return cp;
+    }
+
+    //Positioning
+    private void PositionAllPieces()
+    {
+        for (int x = 0; x < TILE_COUNT_X; x++) { 
+            for (int y = 0; y < TILE_COUNT_Y; y++) {
+                 
+            }
+        }
+    }
+    private void PositionSinglePiece(int x, int y, bool force = false)
+    {
+
+    }
+       
 
     //Operations
     private Vector2Int LookupTileIndex(GameObject hitInfo)
