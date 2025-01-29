@@ -323,7 +323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileMaterial: {fileID: 2100000, guid: e6e5e4282f03dcd4ea65447fe1b7a552, type: 2}
   tileSize: 1
-  yOffset: 0.2
+  yOffset: 0
   boardCenter: {x: 0, y: 0, z: 0}
   prefabs:
   - {fileID: 9009459095962646883, guid: 2ab5853fbd050f041a547fb8671cb92b, type: 3}
@@ -335,6 +335,9 @@ MonoBehaviour:
   teamMaterials:
   - {fileID: 2100000, guid: a9d6f67c3bc202645a62709d32c082ed, type: 2}
   - {fileID: 2100000, guid: 994f47ecb333f3a45aa4f01229278523, type: 2}
+  deathSize: 0.5
+  deathSpacing: 0.53
+  dragOffset: 1.5
 --- !u!1 &1852930451
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,7 +398,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 80
+  field of view: 75
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -421,13 +424,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1852930451}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.32041115, y: 0.63034654, z: -0.3204112, w: 0.6303465}
-  m_LocalPosition: {x: -5, y: 5, z: -0}
+  m_LocalRotation: {x: 0.46174863, y: 0, z: 0, w: 0.8870109}
+  m_LocalPosition: {x: 0, y: 6.5, z: -4.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 53.889, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 55, y: 0, z: 0}
 --- !u!114 &1852930455
 MonoBehaviour:
   m_ObjectHideFlags: 0
