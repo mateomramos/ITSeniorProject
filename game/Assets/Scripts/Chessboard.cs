@@ -24,6 +24,7 @@ public class Chessboard : MonoBehaviour
     // LOGIC 
     private ChessPiece[,] chessPieces;
     private ChessPiece currentlyDragging;
+    private List<Vector2Int> availableMoves = new List<Vector2Int>();
     private List<ChessPiece> deadWhites = new List<ChessPiece>();
     private List<ChessPiece> deadBlacks = new List<ChessPiece>();
     private const int TILE_COUNT_X = 8;
@@ -50,7 +51,7 @@ public class Chessboard : MonoBehaviour
 
         RaycastHit info;
         Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover"))) {
+        if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover", "Highlight"))) {
 
             //Get the index of the hit tile
             Vector2Int hitPosition = LookupTileIndex(info.transform.gameObject);
@@ -62,10 +63,10 @@ public class Chessboard : MonoBehaviour
                 tiles[hitPosition.x, hitPosition.y].layer = LayerMask.NameToLayer("Hover");
             }
 
-            //If tile was already hovered, change the previous one
+            //If tile we were already hovering a tile, change the previous one
             if (currentHover != hitPosition) {
 
-                tiles[currentHover.x, currentHover.y].layer = LayerMask.NameToLayer("Tile");
+                tiles[currentHover.x, currentHover.y].layer = (ContainsValidMove(ref availableMoves, currentHover)) ? LayerMask.NameToLayer("Highlight") : LayerMask.NameToLayer("Tile");
                 currentHover = hitPosition;
                 tiles[hitPosition.x, hitPosition.y].layer = LayerMask.NameToLayer("Hover");
             }
@@ -77,29 +78,35 @@ public class Chessboard : MonoBehaviour
                 if (chessPieces[hitPosition.x, hitPosition.y] != null) {
                     //if our turn
                     if (true) {
+
                         currentlyDragging = chessPieces[hitPosition.x, hitPosition.y];
+
+                        //get list of avail moves, and highlight avail moves
+                        availableMoves = currentlyDragging.GetAvailableMoves(ref chessPieces, TILE_COUNT_X, TILE_COUNT_Y);
+                        HighlightTiles();
                     }
                 }
             }
 
             //If mouse is released
-            if(currentlyDragging != null && Input.GetMouseButtonUp(0))
-            {
-                Vector2Int previousPosition = new Vector2Int(currentlyDragging.currentX, currentlyDragging.currentY);
+            if(currentlyDragging != null && Input.GetMouseButtonUp(0)) {
 
+                Vector2Int previousPosition = new Vector2Int(currentlyDragging.currentX, currentlyDragging.currentY);
+                
                 bool validMove = MoveTo(currentlyDragging, hitPosition.x, hitPosition.y);
                 if (!validMove) {
+
                     currentlyDragging.SetPosition(getTileCenter(previousPosition.x, previousPosition.y));
-                    currentlyDragging = null;
-                } else {
-                    currentlyDragging = null;
                 }
+
+                currentlyDragging = null;
+                RemoveHighlightTiles();
             }
 
         } else { 
             if (currentHover != -Vector2Int.one) {
 
-                tiles[currentHover.x, currentHover.y].layer = LayerMask.NameToLayer("Tile");
+                tiles[currentHover.x, currentHover.y].layer = (ContainsValidMove(ref availableMoves, currentHover)) ? LayerMask.NameToLayer("Highlight") : LayerMask.NameToLayer("Tile");
                 currentHover = -Vector2Int.one;
             }
 
@@ -107,6 +114,7 @@ public class Chessboard : MonoBehaviour
 
                 currentlyDragging.SetPosition(getTileCenter(currentlyDragging.currentX, currentlyDragging.currentY));
                 currentlyDragging = null;
+                RemoveHighlightTiles();
             }
         }
 
@@ -175,9 +183,9 @@ public class Chessboard : MonoBehaviour
         chessPieces[5, 0] = SpawnSinglePiece(ChessPieceType.Bishop, whiteTeam);
         chessPieces[6, 0] = SpawnSinglePiece(ChessPieceType.Knight, whiteTeam);
         chessPieces[7, 0] = SpawnSinglePiece(ChessPieceType.Rook, whiteTeam);
-        for (int i = 0; i < TILE_COUNT_X; i++) {
-            chessPieces[i, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
-        }
+//        for (int i = 0; i < TILE_COUNT_X; i++) {
+//            chessPieces[i, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
+//        }
 
         //Black team
         chessPieces[0, 7] = SpawnSinglePiece(ChessPieceType.Rook, blackTeam);
@@ -188,10 +196,9 @@ public class Chessboard : MonoBehaviour
         chessPieces[5, 7] = SpawnSinglePiece(ChessPieceType.Bishop, blackTeam);
         chessPieces[6, 7] = SpawnSinglePiece(ChessPieceType.Knight, blackTeam);
         chessPieces[7, 7] = SpawnSinglePiece(ChessPieceType.Rook, blackTeam);
-        for (int i = 0; i < TILE_COUNT_X; i++)
-        {
-            chessPieces[i, 6] = SpawnSinglePiece(ChessPieceType.Pawn, blackTeam);
-        }
+//        for (int i = 0; i < TILE_COUNT_X; i++) {
+//            chessPieces[i, 6] = SpawnSinglePiece(ChessPieceType.Pawn, blackTeam);
+//        }
     }
     private ChessPiece SpawnSinglePiece(ChessPieceType type, int team)
     {
@@ -231,11 +238,43 @@ public class Chessboard : MonoBehaviour
     {
         return new Vector3(x * tileSize, 0.19f, y * tileSize) - bounds + new Vector3(tileSize / 2, 0, tileSize / 2);
     }
+    
+    // Highlight Tiles
+    private void HighlightTiles()
+    {
+        for (int i = 0; i < availableMoves.Count; i++)
+        {
+            tiles[availableMoves[i].x, availableMoves[i].y].layer = LayerMask.NameToLayer("Highlight");
+        }
+    }
+    private void RemoveHighlightTiles()
+    {
+        for (int i = 0; i < availableMoves.Count; i++)
+        {
+            tiles[availableMoves[i].x, availableMoves[i].y].layer = LayerMask.NameToLayer("Tile");
+        }
+
+        availableMoves.Clear();
+    }
 
 
     //Operations
+    private bool ContainsValidMove(ref List<Vector2Int> moves, Vector2 pos)
+    {
+        for (int i = 0; i < moves.Count; i++) { 
+            if (moves[i].x == pos.x && moves[i].y == pos.y) { 
+                return true;
+            }
+        }
+        return false;
+    }
     private bool MoveTo(ChessPiece cp, int x, int y)
     {
+
+        if (!ContainsValidMove(ref availableMoves, new Vector2(x, y))) {
+            return false;
+        }    
+
         Vector2Int previousPosition = new Vector2Int(cp.currentX, cp.currentY);
         
         //Another piece on the target position?
