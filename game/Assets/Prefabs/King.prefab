@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100000, guid: a1edea9a41e71514f94a737abaf1410c, type: 3}
       propertyPath: m_Name
-      value: Black King
+      value: King
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: a1edea9a41e71514f94a737abaf1410c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -51,6 +51,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: a1edea9a41e71514f94a737abaf1410c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: a1edea9a41e71514f94a737abaf1410c, type: 3}
+      propertyPath: m_CastShadows
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
