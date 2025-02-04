@@ -65,6 +65,16 @@ public class Chessboard : MonoBehaviour
             return;
         }
 
+        if (!isWhiteTurn)
+        {
+            currentCamera.transform.position = new Vector3Int(0, 7, 5);
+            currentCamera.transform.rotation = Quaternion.Euler(60, 180, 0);
+        } else
+        {
+            currentCamera.transform.position = new Vector3Int(0, 7, -5);
+            currentCamera.transform.rotation = Quaternion.Euler(60, 0, 0);
+        }
+
         RaycastHit info;
         Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover", "Highlight"))) {
